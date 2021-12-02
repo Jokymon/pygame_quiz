@@ -2,18 +2,17 @@
 import pygame
 
 
-
 pygame.init()
 def fontsize(size):
 	font = pygame.font.SysFont("Arial", size)
 	return font
+
 
 font_default = fontsize(20)
 
 
 labels = []
 class Label:
-
 	''' CLASS FOR TEXT LABELS ON THE WIN SCREEN SURFACE '''
 	def __init__(self, screen, text, x, y, size=20, color="white"):
 		if size != 20:
@@ -39,35 +38,29 @@ class Label:
 
 
 def show_labels():
-	for _ in labels:
-		_.draw()
+	for label in labels:
+		label.draw()
 
-
-'''     when you import this module
-text1 = Text(win, "Ciao a tutti", 100, 100) # out of loop
-text.draw() # into the loop
-'''
 
 if __name__ == '__main__':
 	# TEXT TO SHOW ON THE SCREEN AT POS 100 100
 	win = pygame.display.set_mode((600, 600))
 	clock = pygame.time.Clock()
 
-
 	Label(win, "Hello World", 100, 100, 36)
 	second = Label(win, "GiovanniPython", 100, 200, 24, color="yellow")
 	second.change_font("Arial", 40, "yellow")
 	# LOOP TO MAKE THINGS ON THE SCRREEN
-	loop = 1
+	loop = True
 	while loop:
 		win.fill(0) # CLEAN THE SCREEN EVERY FRAME
 		# CODE TO CLOSE THE WINDOW
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				loop = 0
+				loop = False
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
-					loop = 0
+					loop = False
 		# CODE TO SHOW TEXT EVERY FRAME
 		show_labels()
 		pygame.display.update()

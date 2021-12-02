@@ -1,11 +1,12 @@
 import pygame
 import pygame.gfxdraw
-import sys
 import time
 import random
-# the Label class is this module below
 from label import *
 
+
+current_question_number = 1
+points = 0
 
 pygame.init()
 pygame.mixer.init()
@@ -25,7 +26,6 @@ class Button(pygame.sprite.Sprite):
 
         # the hover_colors attribute needs to be fixed
         super().__init__()
-        global num
 
         self.text = text
         self.command = command
@@ -78,7 +78,6 @@ class Button(pygame.sprite.Sprite):
             self.colors = self.original_colors
             # pygame.mouse.set_cursor(*pygame.cursors.arrow)
 
-
     def hover(self):
         ''' checks if the mouse is over the button and changes the color if it is true '''
 
@@ -99,48 +98,44 @@ class Button(pygame.sprite.Sprite):
 
 # ACTION FOR BUTTON CLICK ================
 
-def on_click():
-    print("Click on one answer")
-
 def on_right():
     check_score("right")
+
 
 def on_false():
     ''' if there is no 'right' as arg it means it's false '''
     check_score()
 
+
 def check_score(answered="wrong"):
     ''' here we check if the answer is right '''
-    global qnum, points
+    global current_question_number, points
     
     # until there are questions (before last)
     hit.play() # click sound
-    if qnum < len(questions):
-        print(qnum, len(questions))
+    if current_question_number < len(questions):
+        print(current_question_number, len(questions))
         if answered == "right":
             time.sleep(.1) # to avoid adding more point when pressing too much
             points += 1
             # Show the score text
-        qnum += 1 # counter for next question in the list
+        current_question_number += 1 # counter for next question in the list
         score.change_text(str(points))
         # Change the text of the question
-        title.change_text(questions[qnum-1][0], color="cyan")
+        title.change_text(questions[current_question_number-1][0], color="cyan")
         # change the question number
-        num_question.change_text(str(qnum))
-        show_question(qnum) # delete old buttons and show new
+        num_question.change_text(str(current_question_number))
+        show_question(current_question_number) # delete old buttons and show new
         
-
     # for the last question...
-    elif qnum == len(questions):
-        print(qnum, len(questions))
+    elif current_question_number == len(questions):
+        print(current_question_number, len(questions))
         if answered == "right":
             kill()
             time.sleep(.1)
             points +=1
         score.change_text("You reached a score of " + str(points))
     time.sleep(.5)
-
-
 
 
 questions = [
@@ -150,19 +145,13 @@ questions = [
 ]
 
 
-
-
-def show_question(qnum):
-    ''' put your buttons here '''
-
+def show_question(current_question_number):
     # Kills the previous buttons/sprites
     kill()
 
-    
-    # The 4 position of the buttons
-    pos = [100, 150, 200, 250]
+    button_y_positions = [100, 150, 200, 250]
     # randomized, so that the right one is not on top
-    random.shuffle(pos)
+    random.shuffle(button_y_positions)
 
     Button((10, 100), "1. ", 36, "red on yellow",
         hover_colors="blue on orange", borderc=(255,255,0),
@@ -179,36 +168,33 @@ def show_question(qnum):
 
 
     # ============== TEXT: question and answers ====================
-    Button((50, pos[0]), questions[qnum-1][1][0], 36, "red on yellow",
+    Button((50, button_y_positions[0]), questions[current_question_number-1][1][0], 36, "red on yellow",
         hover_colors="blue on orange", borderc=(255,255,0),
         command=on_right)
-    Button((50, pos[1]), questions[qnum-1][1][1], 36, "red on yellow",
+    Button((50, button_y_positions[1]), questions[current_question_number-1][1][1], 36, "red on yellow",
         hover_colors="blue on orange", borderc=(255,255,0),
         command=on_false)
-    Button((50, pos[2]), questions[qnum-1][1][2], 36, "red on yellow",
+    Button((50, button_y_positions[2]), questions[current_question_number-1][1][2], 36, "red on yellow",
         hover_colors="blue on orange", borderc=(255,255,0),
         command=on_false)
-    Button((50, pos[3]), questions[qnum-1][1][3], 36, "red on yellow",
+    Button((50, button_y_positions[3]), questions[current_question_number-1][1][3], 36, "red on yellow",
         hover_colors="blue on orange", borderc=(255,255,0),
         command=on_false)
 
 
 def kill():
-    for _ in buttons:
-        _.kill()
+    for button in buttons:
+        button.kill()
 
-qnum = 1
-points = 0
+
 # ================= SOME LABELS ==========================
-num_question = Label(screen, str(qnum), 0, 0)
+num_question = Label(screen, str(current_question_number), 0, 0)
 score = Label(screen, "Punteggio", 50, 300)
-title = Label(screen, questions[qnum-1][0], 10, 10, 55, color="cyan")
+title = Label(screen, questions[current_question_number-1][0], 10, 10, 55, color="cyan")
 write1 = Label(screen, "PYQUIZ BY GiovanniPython", 50, 350, 20, color="red")
 
 def loop():
-    global game_on
-
-    show_question(qnum)
+    show_question(current_question_number)
 
     quit = False
     while not quit:
@@ -229,6 +215,4 @@ def loop():
 
 
 if __name__ == '__main__':
-    pygame.init()
-    game_on = 1
     loop()
