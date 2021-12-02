@@ -20,7 +20,6 @@ class Button(pygame.sprite.Sprite):
     def __init__(self, position, text, size,
         colors="white on blue",
         hover_colors="red on green",
-        style="button1",
         borderc=(255,255,255),
         command=lambda: print("No command activated for this button")):
 
@@ -39,9 +38,7 @@ class Button(pygame.sprite.Sprite):
             self.hover_colors = f"{self.bg} on {self.fg}"
         else:
             self.hover_colors = hover_colors
-        # styles can be button1 or button2 (more simple this one)
-        self.style = style
-        self.borderc = borderc # for the style2
+        self.borderc = borderc
         # font
         self.font = pygame.font.SysFont("Arial", size)
         self.render(self.text)
@@ -61,32 +58,12 @@ class Button(pygame.sprite.Sprite):
 
     def update(self):
         self.fg, self.bg = self.colors.split(" on ")
-        if self.style == "button1":
-            self.draw_button1()
-        elif self.style == "button2":
-            self.draw_button2()
+        self.draw_button()
         if self.command != None:
             self.hover()
             self.click()
 
-    def draw_button1(self):
-        ''' draws 4 lines around the button and the background '''
-        # horizontal up
-        lcolor = (150, 150, 150)
-        lcolor2 = (50, 50, 50)
-        pygame.draw.line(screen, lcolor, self.position,
-            (self.x + self.w , self.y), 5)
-        pygame.draw.line(screen, lcolor, (self.x, self.y - 2),
-            (self.x, self.y + self.h), 5)
-        # horizontal down
-        pygame.draw.line(screen, lcolor2, (self.x, self.y + self.h),
-            (self.x + self.w , self.y + self.h), 5)
-        pygame.draw.line(screen, lcolor2, (self.x + self.w , self.y + self.h),
-            [self.x + self.w , self.y], 5)
-        # background of the button
-        pygame.draw.rect(screen, self.bg, self.rect)  
-
-    def draw_button2(self):
+    def draw_button(self):
         ''' a linear border '''
         # the width is set to 500 to have the same size not depending on the text size
         pygame.draw.rect(screen, self.bg, (self.x - 50, self.y, 500 , self.h))
@@ -188,31 +165,31 @@ def show_question(qnum):
     random.shuffle(pos)
 
     Button((10, 100), "1. ", 36, "red on yellow",
-        hover_colors="blue on orange", style="button2", borderc=(255,255,0),
+        hover_colors="blue on orange", borderc=(255,255,0),
         command=None)
     Button((10, 150), "2. ", 36, "red on yellow",
-        hover_colors="blue on orange", style="button2", borderc=(255,255,0),
+        hover_colors="blue on orange", borderc=(255,255,0),
         command=None)
     Button((10, 200), "3. ", 36, "red on yellow",
-        hover_colors="blue on orange", style="button2", borderc=(255,255,0),
+        hover_colors="blue on orange", borderc=(255,255,0),
         command=None)
     Button((10, 250), "4. ", 36, "red on yellow",
-        hover_colors="blue on orange", style="button2", borderc=(255,255,0),
+        hover_colors="blue on orange", borderc=(255,255,0),
         command=None)
 
 
     # ============== TEXT: question and answers ====================
     Button((50, pos[0]), questions[qnum-1][1][0], 36, "red on yellow",
-        hover_colors="blue on orange", style="button2", borderc=(255,255,0),
+        hover_colors="blue on orange", borderc=(255,255,0),
         command=on_right)
     Button((50, pos[1]), questions[qnum-1][1][1], 36, "red on yellow",
-        hover_colors="blue on orange", style="button2", borderc=(255,255,0),
+        hover_colors="blue on orange", borderc=(255,255,0),
         command=on_false)
     Button((50, pos[2]), questions[qnum-1][1][2], 36, "red on yellow",
-        hover_colors="blue on orange", style="button2", borderc=(255,255,0),
+        hover_colors="blue on orange", borderc=(255,255,0),
         command=on_false)
     Button((50, pos[3]), questions[qnum-1][1][3], 36, "red on yellow",
-        hover_colors="blue on orange", style="button2", borderc=(255,255,0),
+        hover_colors="blue on orange", borderc=(255,255,0),
         command=on_false)
 
 
