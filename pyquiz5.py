@@ -205,28 +205,28 @@ score = Label(screen, "Punteggio", 50, 300)
 title = Label(screen, questions[qnum-1][0], 10, 10, 55, color="cyan")
 write1 = Label(screen, "PYQUIZ BY GiovanniPython", 50, 350, 20, color="red")
 
-def start_again():
-    pass
-
 def loop():
     global game_on
 
     show_question(qnum)
 
-    while True:
+    quit = False
+    while not quit:
         screen.fill(0)
-        for event in pygame.event.get(): # ====== quit / exit
+        for event in pygame.event.get():
             if (event.type == pygame.QUIT):
-                pygame.quit()
+                quit = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-        buttons.update() #                     update buttons
-        buttons.draw(screen)
-        show_labels()        #                 update labels
-        clock.tick(60)
-        pygame.display.update()
+                    quit = True
+        if not quit:
+            buttons.update()
+            buttons.draw(screen)
+            show_labels()        #                 update labels
+            clock.tick(60)
+            pygame.display.update()
     pygame.quit()
+
 
 if __name__ == '__main__':
     pygame.init()
