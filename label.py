@@ -11,10 +11,12 @@ def fontsize(size):
 font_default = fontsize(20)
 
 
-labels = []
-class Label:
+labels = pygame.sprite.Group()
+class Label(pygame.sprite.Sprite):
 	''' CLASS FOR TEXT LABELS ON THE WIN SCREEN SURFACE '''
 	def __init__(self, screen, text, x, y, size=20, color="white"):
+		super().__init__()
+
 		if size != 20:
 			self.font = fontsize(size)
 		else:
@@ -24,7 +26,7 @@ class Label:
 		self.rect = pygame.Rect(x, y, w, h)
 		self.screen = screen
 		self.text = text
-		labels.append(self)
+		labels.add(self)
 
 	def change_text(self, newtext, color="white"):
 		self.image = self.font.render(newtext, 1, color)
