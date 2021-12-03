@@ -46,7 +46,6 @@ class Button(pygame.sprite.Sprite):
         self.x, self.y = position
         self.rect = pygame.Rect(self.x, self.y, 500, self.h)
         self.position = position
-        self.pressed = 1
         # the groups with all the buttons
         buttons.add(self)
 
@@ -56,12 +55,21 @@ class Button(pygame.sprite.Sprite):
         # memorize the surface in the image attributes
         self.image = self.text_render
 
-    def update(self):
-        self.fg, self.bg = self.colors.split(" on ")
-        self.draw_button()
-        if self.command != None:
-            self.hover()
-            self.click()
+    def update(self, *args):
+        if len(args)>0 and args[0]=="event":
+            self._handle_event(args[1])
+        else:
+            self.fg, self.bg = self.colors.split(" on ")
+            self.draw_button()
+            if self.command != None:
+                self.hover()
+
+    def _handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONUP:
+            if self.rect.collidepoint(pygame.mouse.get_pos()):
+                if self.command is not None:
+                    print("The answer is:'" + self.text + "'")
+                    self.command()
 
     def draw_button(self):
         ''' a linear border '''
@@ -82,18 +90,6 @@ class Button(pygame.sprite.Sprite):
         ''' checks if the mouse is over the button and changes the color if it is true '''
 
         self.check_collision()
-
-    def click(self):
-        ''' checks if you click on the button and makes the call to the action just one time'''
-        if self.rect.collidepoint(pygame.mouse.get_pos()):
-            if pygame.mouse.get_pressed()[0] and self.pressed == 1:
-                print("The answer is:'" + self.text + "'")
-                self.command()
-                self.pressed = 0
-
-            if pygame.mouse.get_pressed() == (0,0,0):
-                self.pressed = 1
-
 
 
 # ACTION FOR BUTTON CLICK ================
@@ -205,6 +201,7 @@ def loop():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     quit = True
+            buttons.update("event", event)
         if not quit:
             buttons.update()
             buttons.draw(screen)
