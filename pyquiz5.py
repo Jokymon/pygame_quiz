@@ -2,6 +2,7 @@ import pygame
 import pygame.gfxdraw
 import time
 import random
+import themes
 from label import *
 
 
@@ -17,28 +18,13 @@ clock = pygame.time.Clock()
 buttons = pygame.sprite.Group()
 class Button(pygame.sprite.Sprite):
     ''' A button treated like a Sprite... and killed too '''
-    
-    def __init__(self, position, text, size,
-        colors="white on blue",
-        hover_colors="red on green",
-        borderc=(255,255,255),
-        command=lambda: print("No command activated for this button")):
-
-        # the hover_colors attribute needs to be fixed
+    def __init__(self, position, text, size, theme,
+        command=lambda: None):
         super().__init__()
 
         self.text = text
         self.command = command
-        # --- colors ---
-        self.colors = colors
-        self.original_colors = colors
-        self.fg, self.bg = self.colors.split(" on ")
-        # hover_colors
-        if hover_colors == "red on green":
-            self.hover_colors = f"{self.bg} on {self.fg}"
-        else:
-            self.hover_colors = hover_colors
-        self.borderc = borderc
+        self.theme = theme
         # font
         self.font = pygame.font.SysFont("Arial", size)
         self.render(self.text)
@@ -50,19 +36,15 @@ class Button(pygame.sprite.Sprite):
         buttons.add(self)
 
     def render(self, text):
-        # we have a surface
-        self.text_render = self.font.render(text, 1, self.fg)
-        # memorize the surface in the image attributes
+        self.text_render = self.font.render(text, 1, self.theme.button.normal.text_color)
         self.image = self.text_render
 
     def update(self, *args):
         if len(args)>0 and args[0]=="event":
             self._handle_event(args[1])
         else:
-            self.fg, self.bg = self.colors.split(" on ")
-            self.draw_button()
-            if self.command != None:
-                self.hover()
+            colors = self._current_gui_colors()
+            self._draw_button(colors)
 
     def _handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
@@ -71,25 +53,19 @@ class Button(pygame.sprite.Sprite):
                     print("The answer is:'" + self.text + "'")
                     self.command()
 
-    def draw_button(self):
-        ''' a linear border '''
-        # the width is set to 500 to have the same size not depending on the text size
-        pygame.draw.rect(screen, self.bg, (self.x - 50, self.y, 500 , self.h))
-        pygame.gfxdraw.rectangle(screen, (self.x - 50, self.y, 500 , self.h), self.borderc)
-
-    def check_collision(self):
+    def _current_gui_colors(self):
+        if self.command is None:
+            return self.theme.button.normal
         if self.rect.collidepoint(pygame.mouse.get_pos()):
-            # you can change the colors when the pointer is on the button if you want
-            self.colors = self.hover_colors
-            # pygame.mouse.set_cursor(*pygame.cursors.diamond)
-        else:
-            self.colors = self.original_colors
-            # pygame.mouse.set_cursor(*pygame.cursors.arrow)
+            return self.theme.button.hover
+        return self.theme.button.normal
 
-    def hover(self):
-        ''' checks if the mouse is over the button and changes the color if it is true '''
-
-        self.check_collision()
+    def _draw_button(self, colors):
+        # the width is set to 500 to have the same size not depending on the text size
+        pygame.draw.rect(screen, colors.background_color,
+            (self.x - 50, self.y, 500 , self.h))
+        pygame.gfxdraw.rectangle(screen, (self.x - 50, self.y, 500 , self.h),
+            self.theme.button.border_color)
 
 
 # ACTION FOR BUTTON CLICK ================
@@ -149,32 +125,28 @@ def show_question(current_question_number):
     # randomized, so that the right one is not on top
     random.shuffle(button_y_positions)
 
-    Button((10, 100), "1. ", 36, "red on yellow",
-        hover_colors="blue on orange", borderc=(255,255,0),
+    Button((10, 100), "1. ", 36, theme=themes.pyquiz_theme,
         command=None)
-    Button((10, 150), "2. ", 36, "red on yellow",
-        hover_colors="blue on orange", borderc=(255,255,0),
+    Button((10, 150), "2. ", 36, theme=themes.pyquiz_theme,
         command=None)
-    Button((10, 200), "3. ", 36, "red on yellow",
-        hover_colors="blue on orange", borderc=(255,255,0),
+    Button((10, 200), "3. ", 36, theme=themes.pyquiz_theme,
         command=None)
-    Button((10, 250), "4. ", 36, "red on yellow",
-        hover_colors="blue on orange", borderc=(255,255,0),
+    Button((10, 250), "4. ", 36, theme=themes.pyquiz_theme,
         command=None)
 
 
     # ============== TEXT: question and answers ====================
-    Button((50, button_y_positions[0]), questions[current_question_number-1][1][0], 36, "red on yellow",
-        hover_colors="blue on orange", borderc=(255,255,0),
+    Button((50, button_y_positions[0]), questions[current_question_number-1][1][0], 36,
+        theme=themes.pyquiz_theme,
         command=on_right)
-    Button((50, button_y_positions[1]), questions[current_question_number-1][1][1], 36, "red on yellow",
-        hover_colors="blue on orange", borderc=(255,255,0),
+    Button((50, button_y_positions[1]), questions[current_question_number-1][1][1], 36,
+        theme=themes.pyquiz_theme,
         command=on_false)
-    Button((50, button_y_positions[2]), questions[current_question_number-1][1][2], 36, "red on yellow",
-        hover_colors="blue on orange", borderc=(255,255,0),
+    Button((50, button_y_positions[2]), questions[current_question_number-1][1][2], 36,
+        theme=themes.pyquiz_theme,
         command=on_false)
-    Button((50, button_y_positions[3]), questions[current_question_number-1][1][3], 36, "red on yellow",
-        hover_colors="blue on orange", borderc=(255,255,0),
+    Button((50, button_y_positions[3]), questions[current_question_number-1][1][3], 36,
+        theme=themes.pyquiz_theme,
         command=on_false)
 
 
