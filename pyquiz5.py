@@ -56,14 +56,14 @@ class Button(pygame.sprite.Sprite):
         self.theme = theme
         self.command = command
 
-        self.render(self.text)
+        self.set_text(self.text)
         self.x, self.y, self.w , self.h = self.text_render.get_rect()
         self.x, self.y = position
         self.rect = pygame.Rect(self.x, self.y, 500, self.h)
 
         buttons.add(self)
 
-    def render(self, text):
+    def set_text(self, text):
         self.text_render = self.theme.button.font.render(text, 1, self.theme.button.normal.text_color)
         self.image = self.text_render
 
@@ -118,10 +118,10 @@ def check_score(answer_index):
 
 
 def show_question():
-    button1.render(game.get_current_answer(0))
-    button2.render(game.get_current_answer(1))
-    button3.render(game.get_current_answer(2))
-    button4.render(game.get_current_answer(3))
+    button1.set_text(game.get_current_answer(0))
+    button2.set_text(game.get_current_answer(1))
+    button3.set_text(game.get_current_answer(2))
+    button4.set_text(game.get_current_answer(3))
 
 
 def kill():
