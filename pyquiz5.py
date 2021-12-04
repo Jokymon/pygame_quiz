@@ -165,7 +165,7 @@ def loop():
         if not quit:
             buttons.update()
             buttons.draw(screen)
-            show_labels()
+            labels.draw(screen)
             clock.tick(60)
             pygame.display.update()
     pygame.quit()

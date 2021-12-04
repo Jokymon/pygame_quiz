@@ -39,11 +39,6 @@ class Label(pygame.sprite.Sprite):
 		self.screen.blit(self.image, (self.rect))
 
 
-def show_labels():
-	for label in labels:
-		label.draw()
-
-
 if __name__ == '__main__':
 	# TEXT TO SHOW ON THE SCREEN AT POS 100 100
 	win = pygame.display.set_mode((600, 600))
@@ -63,8 +58,7 @@ if __name__ == '__main__':
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
 					loop = False
-		# CODE TO SHOW TEXT EVERY FRAME
-		show_labels()
+		labels.draw(win)
 		pygame.display.update()
 		clock.tick(60)
 
