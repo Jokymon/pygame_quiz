@@ -121,13 +121,13 @@ def check_score(answered="wrong"):
         title.change_text(game.get_current_title(), color="cyan")
         num_question.change_text(str(game.current_question_number))
 
-        show_question(game.current_question_number)
+        show_question()
     else:
         kill()
         score.change_text("You reached a score of " + str(game.points))
 
 
-def show_question(current_question_number):
+def show_question():
     # Kills the previous buttons/sprites
     kill()
 
@@ -164,7 +164,7 @@ title = Label(screen, game.get_current_title(), 10, 10, 55, color="cyan")
 write1 = Label(screen, "PYQUIZ BY GiovanniPython", 50, 350, 20, color="red")
 
 def loop():
-    show_question(game.current_question_number)
+    show_question()
 
     quit = False
     while not quit:
