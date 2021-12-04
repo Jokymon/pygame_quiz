@@ -20,7 +20,7 @@ buttons = pygame.sprite.Group()
 
 class Button(pygame.sprite.Sprite):
     """A pygame GUI button."""
-    def __init__(self, position, text, size,
+    def __init__(self, position, text,
         theme=themes.pyquiz_theme,
         command=None):
         super().__init__()
@@ -29,7 +29,6 @@ class Button(pygame.sprite.Sprite):
         self.theme = theme
         self.command = command
 
-        self.font = pygame.font.SysFont("Arial", size)
         self.render(self.text)
         self.x, self.y, self.w , self.h = self.text_render.get_rect()
         self.x, self.y = position
@@ -38,7 +37,7 @@ class Button(pygame.sprite.Sprite):
         buttons.add(self)
 
     def render(self, text):
-        self.text_render = self.font.render(text, 1, self.theme.button.normal.text_color)
+        self.text_render = self.theme.button.font.render(text, 1, self.theme.button.normal.text_color)
         self.image = self.text_render
 
     def update(self, *args):
@@ -121,20 +120,20 @@ def show_question(current_question_number):
     # randomized, so that the right one is not on top
     random.shuffle(button_y_positions)
 
-    Button((10, 100), "1. ", 36)
-    Button((10, 150), "2. ", 36)
-    Button((10, 200), "3. ", 36)
-    Button((10, 250), "4. ", 36)
+    Button((10, 100), "1. ")
+    Button((10, 150), "2. ")
+    Button((10, 200), "3. ")
+    Button((10, 250), "4. ")
 
 
     # ============== TEXT: question and answers ====================
-    Button((50, button_y_positions[0]), questions[current_question_number-1][1][0], 36,
+    Button((50, button_y_positions[0]), questions[current_question_number-1][1][0],
         command=on_right)
-    Button((50, button_y_positions[1]), questions[current_question_number-1][1][1], 36,
+    Button((50, button_y_positions[1]), questions[current_question_number-1][1][1],
         command=on_false)
-    Button((50, button_y_positions[2]), questions[current_question_number-1][1][2], 36,
+    Button((50, button_y_positions[2]), questions[current_question_number-1][1][2],
         command=on_false)
-    Button((50, button_y_positions[3]), questions[current_question_number-1][1][3], 36,
+    Button((50, button_y_positions[3]), questions[current_question_number-1][1][3],
         command=on_false)
 
 
