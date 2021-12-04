@@ -24,8 +24,8 @@ class Game:
     def number_of_questions(self):
         return len(self.questions)
 
-    def give_answer(self, correct):
-        if correct:
+    def give_answer(self, answer_index):
+        if answer_index==0:
             self.points += 1
         self.current_question_number += 1
 
@@ -97,24 +97,14 @@ class Button(pygame.sprite.Sprite):
             self.theme.button.border_color)
 
 
-# ===== Button handlers ========================
-def on_right():
-    check_score("right")
-
-
-def on_false():
-    ''' if there is no 'right' as arg it means it's false '''
-    check_score()
-
-
-def check_score(answered="wrong"):
+def check_score(answer_index):
     """Check for correct answer, update the game state and update the GUI"""
     print(game.current_question_number, game.number_of_questions())
 
     if game.has_ended():
         return
 
-    game.give_answer(answered == "right")
+    game.give_answer(answer_index)
 
     if not game.has_ended():
         score.change_text(str(game.points))
@@ -143,13 +133,13 @@ def show_question():
 
     # ============== TEXT: question and answers ====================
     Button((50, button_y_positions[0]), game.get_current_answer(0),
-        command=on_right)
+        command=lambda: check_score(0))
     Button((50, button_y_positions[1]), game.get_current_answer(1),
-        command=on_false)
+        command=lambda: check_score(1))
     Button((50, button_y_positions[2]), game.get_current_answer(2),
-        command=on_false)
+        command=lambda: check_score(2))
     Button((50, button_y_positions[3]), game.get_current_answer(3),
-        command=on_false)
+        command=lambda: check_score(3))
 
 
 def kill():
