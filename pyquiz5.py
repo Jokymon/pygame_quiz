@@ -5,8 +5,18 @@ import themes
 from label import *
 
 
-current_question_number = 1
-points = 0
+class Game:
+    def __init__(self):
+        self.current_question_number = 1
+        self.points = 0
+        self.questions = [
+            ["What is Italy's Capital?", ["Rome", "Paris", "Tokyo", "Madrid"]],
+            ["What is France's Capital?", ["Paris", "Rome", "Tokyo", "Madrid"]],
+            ["What is England's Capital?", ["London", "Rome", "Tokyo", "Madrid"]],
+        ]
+
+
+game = Game()
 
 
 pygame.init()
@@ -81,35 +91,26 @@ def on_false():
 
 
 def check_score(answered="wrong"):
-    ''' here we check if the answer is right '''
-    global current_question_number, points
-    
-    if current_question_number < len(questions):
-        print(current_question_number, len(questions))
+    ''' here we check if the answer is right '''   
+    if game.current_question_number < len(game.questions):
+        print(game.current_question_number, len(game.questions))
         if answered == "right":
-            points += 1
-        current_question_number += 1
-        score.change_text(str(points))
+            game.points += 1
+        game.current_question_number += 1
+        score.change_text(str(game.points))
         # Change the text of the question
-        title.change_text(questions[current_question_number-1][0], color="cyan")
+        title.change_text(game.questions[game.current_question_number-1][0], color="cyan")
         # change the question number
-        num_question.change_text(str(current_question_number))
-        show_question(current_question_number) # delete old buttons and show new
+        num_question.change_text(str(game.current_question_number))
+        show_question(game.current_question_number) # delete old buttons and show new
         
     # for the last question...
-    elif current_question_number == len(questions):
-        print(current_question_number, len(questions))
+    elif game.current_question_number == len(game.questions):
+        print(game.current_question_number, len(game.questions))
         if answered == "right":
             kill()
-            points +=1
-        score.change_text("You reached a score of " + str(points))
-
-
-questions = [
-    ["What is Italy's Capital?", ["Rome", "Paris", "Tokyo", "Madrid"]],
-    ["What is France's Capital?", ["Paris", "Rome", "Tokyo", "Madrid"]],
-    ["What is England's Capital?", ["London", "Rome", "Tokyo", "Madrid"]],
-]
+            game.points +=1
+        score.change_text("You reached a score of " + str(game.points))
 
 
 def show_question(current_question_number):
@@ -127,13 +128,13 @@ def show_question(current_question_number):
 
 
     # ============== TEXT: question and answers ====================
-    Button((50, button_y_positions[0]), questions[current_question_number-1][1][0],
+    Button((50, button_y_positions[0]), game.questions[current_question_number-1][1][0],
         command=on_right)
-    Button((50, button_y_positions[1]), questions[current_question_number-1][1][1],
+    Button((50, button_y_positions[1]), game.questions[current_question_number-1][1][1],
         command=on_false)
-    Button((50, button_y_positions[2]), questions[current_question_number-1][1][2],
+    Button((50, button_y_positions[2]), game.questions[current_question_number-1][1][2],
         command=on_false)
-    Button((50, button_y_positions[3]), questions[current_question_number-1][1][3],
+    Button((50, button_y_positions[3]), game.questions[current_question_number-1][1][3],
         command=on_false)
 
 
@@ -143,13 +144,13 @@ def kill():
 
 
 # ================= SOME LABELS ==========================
-num_question = Label(screen, str(current_question_number), 0, 0)
+num_question = Label(screen, str(game.current_question_number), 0, 0)
 score = Label(screen, "Punteggio", 50, 300)
-title = Label(screen, questions[current_question_number-1][0], 10, 10, 55, color="cyan")
+title = Label(screen, game.questions[game.current_question_number-1][0], 10, 10, 55, color="cyan")
 write1 = Label(screen, "PYQUIZ BY GiovanniPython", 50, 350, 20, color="red")
 
 def loop():
-    show_question(current_question_number)
+    show_question(game.current_question_number)
 
     quit = False
     while not quit:
