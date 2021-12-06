@@ -66,10 +66,10 @@ class Ui:
         self.hit_sound = pygame.mixer.Sound("sounds/hit.wav")
 
         self.num_question = Label((10, 10), f"Question {self.game.current_question_number}:")
-        self.labels.add(self.num_question)
         self.title = Label((10, 40), self.game.get_current_title(), style=style.Style(text_color="cyan"))
-        self.labels.add(self.title)
         self.score = Label((50, 320), "Score: 0")
+        self.labels.add(self.num_question)
+        self.labels.add(self.title)
         self.labels.add(self.score)
 
         self.buttons.add(Button((10, 100), "1. "))
@@ -78,15 +78,15 @@ class Ui:
         self.buttons.add(Button((10, 250), "4. "))
         self.button1 = Button((50, 100), game.get_current_answer(0),
             command=lambda: self._click_answer(0))
-        self.buttons.add(self.button1)
         self.button2 = Button((50, 150), game.get_current_answer(1),
             command=lambda: self._click_answer(1))
-        self.buttons.add(self.button2)
         self.button3 = Button((50, 200), game.get_current_answer(2),
             command=lambda: self._click_answer(2))
-        self.buttons.add(self.button3)
         self.button4 = Button((50, 250), game.get_current_answer(3),
             command=lambda: self._click_answer(3))
+        self.buttons.add(self.button1)
+        self.buttons.add(self.button2)
+        self.buttons.add(self.button3)
         self.buttons.add(self.button4)
 
         self._show_question()
