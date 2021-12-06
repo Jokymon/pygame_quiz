@@ -117,11 +117,11 @@ class Ui:
         self.buttons = pygame.sprite.Group()
         self.labels = pygame.sprite.Group()
 
-        self.num_question = Label(screen, f"Question {self.game.current_question_number}:", 10, 10, 30)
+        self.num_question = Label((10, 10), f"Question {self.game.current_question_number}:")
         self.labels.add(self.num_question)
-        self.title = Label(screen, self.game.get_current_title(), 10, 40, 30, color="cyan")
+        self.title = Label((10, 40), self.game.get_current_title(), style=style.Style(text_color="cyan"))
         self.labels.add(self.title)
-        self.score = Label(screen, "Score: 0", 50, 320, 30)
+        self.score = Label((50, 320), "Score: 0")
         self.labels.add(self.score)
 
         self.buttons.add(Button((10, 100), "1. "))
@@ -164,12 +164,13 @@ class Ui:
         if self.game.has_ended():
             self._show_final_result()
         else:
-            self.score.change_text(f"Score: {self.game.points}")
+            self.score.set_text(f"Score: {self.game.points}")
             self._show_question()
 
     def _show_question(self):
-        self.title.change_text(self.game.get_current_title(), color="cyan")
-        self.num_question.change_text(f"Question {self.game.current_question_number}:")
+        self.title.set_text_color("cyan")
+        self.title.set_text(self.game.get_current_title())
+        self.num_question.set_text(f"Question {self.game.current_question_number}:")
 
         self.button1.set_text(self.game.get_current_answer(0))
         self.button2.set_text(self.game.get_current_answer(1))
@@ -179,7 +180,7 @@ class Ui:
     def _show_final_result(self):
         for button in self.buttons:
             button.kill()
-        self.score.change_text(f"You reached a score of {self.game.points}")
+        self.score.set_text(f"You reached a score of {self.game.points}")
 
 
 def loop():

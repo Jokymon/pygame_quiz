@@ -28,5 +28,9 @@ pyquiz_theme = Style(
             text_color = "blue",
             background_color = "orange"
         )
+    ),
+    label = Style(
+        font = pygame.font.SysFont("Arial", 30),
+        text_color = "white"
     )
 )

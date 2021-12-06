@@ -1,64 +1,52 @@
-
+import copy
 import pygame
+import style
 
 
-pygame.init()
-def fontsize(size):
-	font = pygame.font.SysFont("Arial", size)
-	return font
-
-
-font_default = fontsize(20)
-
-
-labels = pygame.sprite.Group()
 class Label(pygame.sprite.Sprite):
-	''' CLASS FOR TEXT LABELS ON THE WIN SCREEN SURFACE '''
-	def __init__(self, screen, text, x, y, size=20, color="white"):
+	"""A pygame GUI label."""
+	def __init__(self, position, text, theme=style.pyquiz_theme, style=style.Style()):
 		super().__init__()
 
-		if size != 20:
-			self.font = fontsize(size)
-		else:
-			self.font = font_default
-		self.image = self.font.render(text, 1, color)
-		_, _, w, h = self.image.get_rect()
-		self.rect = pygame.Rect(x, y, w, h)
-		self.screen = screen
-		self.text = text
-		labels.add(self)
+		self.style = copy.copy(theme.label)
+		self.style.update(style)
 
-	def change_text(self, newtext, color="white"):
-		self.image = self.font.render(newtext, 1, color)
+		self.set_text(text)
+		self.rect = self.image.get_rect()
+		self.rect.x, self.rect.y = position
 
-	def change_font(self, font, size, color="white"):
-		self.font = pygame.font.SysFont(font, size)
-		self.change_text(self.text, color)
+	def set_text_color(self, color):
+		self.style.text_color = color
+
+	def set_text(self, newtext):
+		self.image = self.style.font.render(newtext, 1, self.style.text_color)
 
 	def draw(self):
 		self.screen.blit(self.image, (self.rect))
 
 
 if __name__ == '__main__':
-	# TEXT TO SHOW ON THE SCREEN AT POS 100 100
-	win = pygame.display.set_mode((600, 600))
+	screen = pygame.display.set_mode((600, 600))
 	clock = pygame.time.Clock()
 
-	Label(win, "Hello World", 100, 100, 36)
-	second = Label(win, "GiovanniPython", 100, 200, 24, color="yellow")
-	second.change_font("Arial", 40, "yellow")
-	# LOOP TO MAKE THINGS ON THE SCRREEN
+	labels = pygame.sprite.Group()
+	labels.add(Label((100, 100), "Hello World",
+		style=style.Style(font=pygame.font.SysFont("Arial", 20)))
+	)
+	second = Label((100, 200), "GiovanniPython",
+		style=style.Style(font=pygame.font.SysFont("Arial", 40), text_color="yellow"))
+	labels.add(second)
+
 	loop = True
 	while loop:
-		win.fill(0) # CLEAN THE SCREEN EVERY FRAME
-		# CODE TO CLOSE THE WINDOW
+		screen.fill(0)
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				loop = False
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
 					loop = False
-		labels.draw(win)
+		labels.draw(screen)
 		pygame.display.update()
 		clock.tick(60)
 
