@@ -58,16 +58,11 @@ class Game:
         self.current_correct_index = indices.index(0)
 
 
-game = Game()
-
-
 pygame.init()
 pygame.mixer.init()
 hit = pygame.mixer.Sound("sounds/hit.wav")
 screen = pygame.display.set_mode((600, 400))
 clock = pygame.time.Clock()
-
-buttons = pygame.sprite.Group()
 
 
 class Button(pygame.sprite.Sprite):
@@ -85,8 +80,6 @@ class Button(pygame.sprite.Sprite):
         self.x, self.y, self.w , self.h = self.text_render.get_rect()
         self.x, self.y = position
         self.rect = pygame.Rect(self.x, self.y, 500, self.h)
-
-        buttons.add(self)
 
     def set_text(self, text):
         self.text_render = self.theme.button.font.render(text, 1, self.theme.button.normal.text_color)
@@ -122,59 +115,81 @@ class Button(pygame.sprite.Sprite):
             self.theme.button.border_color)
 
 
-def check_score(answer_index):
-    """Check for correct answer, update the game state and update the GUI"""
-    print(game.current_question_number, game.number_of_questions())
+class Ui:
+    def __init__(self, game):
+        self.game = game
+        self.buttons = pygame.sprite.Group()
+        self.labels = pygame.sprite.Group()
 
-    if game.has_ended():
-        return
+        self.num_question = Label(screen, f"Question {self.game.current_question_number}:", 10, 10, 30)
+        self.labels.add(self.num_question)
+        self.title = Label(screen, self.game.get_current_title(), 10, 40, 30, color="cyan")
+        self.labels.add(self.title)
+        self.score = Label(screen, "Score: 0", 50, 320, 30)
+        self.labels.add(self.score)
 
-    game.give_answer(answer_index)
+        self.buttons.add(Button((10, 100), "1. "))
+        self.buttons.add(Button((10, 150), "2. "))
+        self.buttons.add(Button((10, 200), "3. "))
+        self.buttons.add(Button((10, 250), "4. "))
+        self.button1 = Button((50, 100), game.get_current_answer(0),
+            command=lambda: self.check_score(0))
+        self.buttons.add(self.button1)
+        self.button2 = Button((50, 150), game.get_current_answer(1),
+            command=lambda: self.check_score(1))
+        self.buttons.add(self.button2)
+        self.button3 = Button((50, 200), game.get_current_answer(2),
+            command=lambda: self.check_score(2))
+        self.buttons.add(self.button3)
+        self.button4 = Button((50, 250), game.get_current_answer(3),
+            command=lambda: self.check_score(3))
+        self.buttons.add(self.button4)
 
-    if not game.has_ended():
-        score.change_text(f"Score: {game.points}")
-        title.change_text(game.get_current_title(), color="cyan")
-        num_question.change_text(f"Question {game.current_question_number}:")
+        self._show_question()
 
-        show_question()
-    else:
-        kill()
-        score.change_text("You reached a score of " + str(game.points))
+    def handle_event(self, event):
+        self.buttons.update("event", event)
 
+    def update(self):
+        self.buttons.update()
 
-def show_question():
-    button1.set_text(game.get_current_answer(0))
-    button2.set_text(game.get_current_answer(1))
-    button3.set_text(game.get_current_answer(2))
-    button4.set_text(game.get_current_answer(3))
+    def draw(self, screen):
+        self.buttons.draw(screen)
+        self.labels.draw(screen)
 
+    def check_score(self, answer_index):
+        """Check for correct answer, update the game state and update the GUI"""
+        print(self.game.current_question_number, self.game.number_of_questions())
 
-def kill():
-    for button in buttons:
-        button.kill()
+        if self.game.has_ended():
+            return
 
+        self.game.give_answer(answer_index)
 
-# ================= SOME LABELS ==========================
-num_question = Label(screen, f"Question {game.current_question_number}:", 10, 10, 30)
-title = Label(screen, game.get_current_title(), 10, 40, 30, color="cyan")
-score = Label(screen, "Score: 0", 50, 320, 30)
+        if not self.game.has_ended():
+            self.score.change_text(f"Score: {self.game.points}")
+            self.title.change_text(self.game.get_current_title(), color="cyan")
+            self.num_question.change_text(f"Question {self.game.current_question_number}:")
 
-Button((10, 100), "1. ")
-Button((10, 150), "2. ")
-Button((10, 200), "3. ")
-Button((10, 250), "4. ")
-button1 = Button((50, 100), game.get_current_answer(0),
-    command=lambda: check_score(0))
-button2 = Button((50, 150), game.get_current_answer(1),
-    command=lambda: check_score(1))
-button3 = Button((50, 200), game.get_current_answer(2),
-    command=lambda: check_score(2))
-button4 = Button((50, 250), game.get_current_answer(3),
-    command=lambda: check_score(3))
+            self._show_question()
+        else:
+            self.kill()
+            self.score.change_text(f"You reached a score of {self.game.points}")
+
+    def _show_question(self):
+        self.button1.set_text(self.game.get_current_answer(0))
+        self.button2.set_text(self.game.get_current_answer(1))
+        self.button3.set_text(self.game.get_current_answer(2))
+        self.button4.set_text(self.game.get_current_answer(3))
+
+    def kill(self):
+        for button in self.buttons:
+            button.kill()
 
 
 def loop():
-    show_question()
+    game = Game()
+    ui = Ui(game)
 
     quit = False
     while not quit:
@@ -185,11 +200,10 @@ def loop():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     quit = True
-            buttons.update("event", event)
+            ui.handle_event(event)
         if not quit:
-            buttons.update()
-            buttons.draw(screen)
-            labels.draw(screen)
+            ui.update()
+            ui.draw(screen)
             clock.tick(60)
             pygame.display.update()
     pygame.quit()
