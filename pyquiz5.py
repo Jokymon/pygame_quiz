@@ -1,5 +1,6 @@
 import pygame
 import pygame.gfxdraw
+import copy
 import random
 import themes
 from label import *
@@ -73,7 +74,7 @@ class Button(pygame.sprite.Sprite):
         super().__init__()
 
         self.text = text
-        self.theme = theme
+        self.style = copy.copy(theme.button)
         self.command = command
 
         self.set_text(self.text)
@@ -82,7 +83,7 @@ class Button(pygame.sprite.Sprite):
         self.rect.w = 500
 
     def set_text(self, text):
-        self.image = self.theme.button.font.render(text, 1, self.theme.button.normal.text_color)
+        self.image = self.style.font.render(text, 1, self.style.normal.text_color)
 
     def update(self, screen):
         colors = self._current_gui_colors()
@@ -97,17 +98,17 @@ class Button(pygame.sprite.Sprite):
 
     def _current_gui_colors(self):
         if self.command is None:
-            return self.theme.button.normal
+            return self.style.normal
         if self.rect.collidepoint(pygame.mouse.get_pos()):
-            return self.theme.button.hover
-        return self.theme.button.normal
+            return self.style.hover
+        return self.style.normal
 
     def _draw_button(self, screen, colors):
         # the width is set to 500 to have the same size not depending on the text size
         pygame.draw.rect(screen, colors.background_color,
             (self.rect.x - 50, self.rect.y, 500 , self.rect.h))
         pygame.gfxdraw.rectangle(screen, (self.rect.x - 50, self.rect.y, 500 , self.rect.h),
-            self.theme.button.border_color)
+            self.style.border_color)
 
 
 class Ui:
