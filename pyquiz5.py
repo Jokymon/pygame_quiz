@@ -77,27 +77,22 @@ class Button(pygame.sprite.Sprite):
         self.command = command
 
         self.set_text(self.text)
-        self.x, self.y, self.w , self.h = self.text_render.get_rect()
-        self.x, self.y = position
-        self.rect = pygame.Rect(self.x, self.y, 500, self.h)
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = position
+        self.rect.w = 500
 
     def set_text(self, text):
-        self.text_render = self.theme.button.font.render(text, 1, self.theme.button.normal.text_color)
-        self.image = self.text_render
+        self.image = self.theme.button.font.render(text, 1, self.theme.button.normal.text_color)
 
-    def update(self, *args):
-        if len(args)>0 and args[0]=="event":
-            self._handle_event(args[1])
-        else:
-            colors = self._current_gui_colors()
-            self._draw_button(colors)
+    def update(self, screen):
+        colors = self._current_gui_colors()
+        self._draw_button(screen, colors)
 
-    def _handle_event(self, event):
+    def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
             if self.rect.collidepoint(pygame.mouse.get_pos()):
                 if self.command is not None:
                     hit.play()
-                    print("The answer is:'" + self.text + "'")
                     self.command()
 
     def _current_gui_colors(self):
@@ -107,11 +102,11 @@ class Button(pygame.sprite.Sprite):
             return self.theme.button.hover
         return self.theme.button.normal
 
-    def _draw_button(self, colors):
+    def _draw_button(self, screen, colors):
         # the width is set to 500 to have the same size not depending on the text size
         pygame.draw.rect(screen, colors.background_color,
-            (self.x - 50, self.y, 500 , self.h))
-        pygame.gfxdraw.rectangle(screen, (self.x - 50, self.y, 500 , self.h),
+            (self.rect.x - 50, self.rect.y, 500 , self.rect.h))
+        pygame.gfxdraw.rectangle(screen, (self.rect.x - 50, self.rect.y, 500 , self.rect.h),
             self.theme.button.border_color)
 
 
@@ -148,10 +143,11 @@ class Ui:
         self._show_question()
 
     def handle_event(self, event):
-        self.buttons.update("event", event)
+        for button in self.buttons:
+            button.handle_event(event)
 
-    def update(self):
-        self.buttons.update()
+    def update(self, screen):
+        self.buttons.update(screen)
 
     def draw(self, screen):
         self.buttons.draw(screen)
@@ -159,32 +155,30 @@ class Ui:
 
     def check_score(self, answer_index):
         """Check for correct answer, update the game state and update the GUI"""
-        print(self.game.current_question_number, self.game.number_of_questions())
-
         if self.game.has_ended():
             return
 
         self.game.give_answer(answer_index)
 
-        if not self.game.has_ended():
-            self.score.change_text(f"Score: {self.game.points}")
-            self.title.change_text(self.game.get_current_title(), color="cyan")
-            self.num_question.change_text(f"Question {self.game.current_question_number}:")
-
-            self._show_question()
+        if self.game.has_ended():
+            self._show_final_result()
         else:
-            self.kill()
-            self.score.change_text(f"You reached a score of {self.game.points}")
+            self.score.change_text(f"Score: {self.game.points}")
+            self._show_question()
 
     def _show_question(self):
+        self.title.change_text(self.game.get_current_title(), color="cyan")
+        self.num_question.change_text(f"Question {self.game.current_question_number}:")
+
         self.button1.set_text(self.game.get_current_answer(0))
         self.button2.set_text(self.game.get_current_answer(1))
         self.button3.set_text(self.game.get_current_answer(2))
         self.button4.set_text(self.game.get_current_answer(3))
 
-    def kill(self):
+    def _show_final_result(self):
         for button in self.buttons:
             button.kill()
+        self.score.change_text(f"You reached a score of {self.game.points}")
 
 
 def loop():
@@ -202,7 +196,7 @@ def loop():
                     quit = True
             ui.handle_event(event)
         if not quit:
-            ui.update()
+            ui.update(screen)
             ui.draw(screen)
             clock.tick(60)
             pygame.display.update()
