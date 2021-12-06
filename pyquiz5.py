@@ -93,7 +93,6 @@ class Button(pygame.sprite.Sprite):
         if event.type == pygame.MOUSEBUTTONUP:
             if self.rect.collidepoint(pygame.mouse.get_pos()):
                 if self.command is not None:
-                    hit.play()
                     self.command()
 
     def _current_gui_colors(self):
@@ -129,16 +128,16 @@ class Ui:
         self.buttons.add(Button((10, 200), "3. "))
         self.buttons.add(Button((10, 250), "4. "))
         self.button1 = Button((50, 100), game.get_current_answer(0),
-            command=lambda: self.check_score(0))
+            command=lambda: self._click_answer(0))
         self.buttons.add(self.button1)
         self.button2 = Button((50, 150), game.get_current_answer(1),
-            command=lambda: self.check_score(1))
+            command=lambda: self._click_answer(1))
         self.buttons.add(self.button2)
         self.button3 = Button((50, 200), game.get_current_answer(2),
-            command=lambda: self.check_score(2))
+            command=lambda: self._click_answer(2))
         self.buttons.add(self.button3)
         self.button4 = Button((50, 250), game.get_current_answer(3),
-            command=lambda: self.check_score(3))
+            command=lambda: self._click_answer(3))
         self.buttons.add(self.button4)
 
         self._show_question()
@@ -154,7 +153,11 @@ class Ui:
         self.buttons.draw(screen)
         self.labels.draw(screen)
 
-    def check_score(self, answer_index):
+    def _click_answer(self, answer_index):
+        hit.play()
+        self._check_score(answer_index)
+
+    def _check_score(self, answer_index):
         """Check for correct answer, update the game state and update the GUI"""
         if self.game.has_ended():
             return
