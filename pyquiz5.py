@@ -2,7 +2,7 @@ import pygame
 import pygame.gfxdraw
 import copy
 import random
-import themes
+import style
 from label import *
 
 
@@ -69,7 +69,7 @@ clock = pygame.time.Clock()
 class Button(pygame.sprite.Sprite):
     """A pygame GUI button."""
     def __init__(self, position, text,
-        theme=themes.pyquiz_theme,
+        theme=style.pyquiz_theme,
         command=None):
         super().__init__()
 
