@@ -132,9 +132,9 @@ def check_score(answer_index):
     game.give_answer(answer_index)
 
     if not game.has_ended():
-        score.change_text(str(game.points))
+        score.change_text(f"Score: {game.points}")
         title.change_text(game.get_current_title(), color="cyan")
-        num_question.change_text(str(game.current_question_number))
+        num_question.change_text(f"Question {game.current_question_number}:")
 
         show_question()
     else:
@@ -155,10 +155,9 @@ def kill():
 
 
 # ================= SOME LABELS ==========================
-num_question = Label(screen, str(game.current_question_number), 0, 0)
-score = Label(screen, "Punteggio", 50, 300)
-title = Label(screen, game.get_current_title(), 10, 10, 55, color="cyan")
-write1 = Label(screen, "PYQUIZ BY GiovanniPython", 50, 350, 20, color="red")
+num_question = Label(screen, f"Question {game.current_question_number}:", 10, 10, 30)
+title = Label(screen, game.get_current_title(), 10, 40, 30, color="cyan")
+score = Label(screen, "Score: 0", 50, 320, 30)
 
 Button((10, 100), "1. ")
 Button((10, 150), "2. ")
