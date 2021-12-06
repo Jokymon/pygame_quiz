@@ -1,6 +1,4 @@
 import pygame
-import pygame.gfxdraw
-import copy
 import random
 import style
 from widgets import *
@@ -59,18 +57,13 @@ class Game:
         self.current_correct_index = indices.index(0)
 
 
-pygame.init()
-pygame.mixer.init()
-hit = pygame.mixer.Sound("sounds/hit.wav")
-screen = pygame.display.set_mode((600, 400))
-clock = pygame.time.Clock()
-
-
 class Ui:
     def __init__(self, game):
         self.game = game
         self.buttons = pygame.sprite.Group()
         self.labels = pygame.sprite.Group()
+
+        self.hit_sound = pygame.mixer.Sound("sounds/hit.wav")
 
         self.num_question = Label((10, 10), f"Question {self.game.current_question_number}:")
         self.labels.add(self.num_question)
@@ -110,7 +103,7 @@ class Ui:
         self.labels.draw(screen)
 
     def _click_answer(self, answer_index):
-        hit.play()
+        self.hit_sound.play()
         self._check_score(answer_index)
 
     def _check_score(self, answer_index):
@@ -143,6 +136,11 @@ class Ui:
 
 
 def loop():
+    pygame.init()
+    pygame.mixer.init()
+    screen = pygame.display.set_mode((600, 400))
+    clock = pygame.time.Clock()
+
     game = Game()
     ui = Ui(game)
 

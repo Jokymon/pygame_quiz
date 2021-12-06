@@ -1,5 +1,6 @@
 import copy
 import pygame
+import pygame.gfxdraw
 import style
 
 
@@ -67,4 +68,3 @@ class Button(pygame.sprite.Sprite):
             (self.rect.x - 50, self.rect.y, 500 , self.rect.h))
         pygame.gfxdraw.rectangle(screen, (self.rect.x - 50, self.rect.y, 500 , self.rect.h),
             self.style.border_color)
-			
